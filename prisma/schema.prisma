@@ -1,0 +1,51 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Produto {
+  id           String  @id @default(uuid())
+  nome         String
+  imagemUrl    String
+  precoUnidade Decimal
+  quantidade   Int
+
+  produtosCarrinho ProdutoCarrinho[] // Pode ter nenhuma ou várias referências em diferentes compras.
+}
+
+model Venda {
+  id               String            @id @default(uuid())
+  latitude         Float
+  longitude        Float
+  dataVenda        DateTime
+  valorTotal       Decimal
+  produtosVendidos ProdutoCarrinho[]
+}
+
+model ProdutoCarrinho {
+  id                String  @id @default(uuid())
+  quantidadeVendida Int
+  valorPago         Decimal
+
+  vendaId   String
+  produtoId String
+  produto   Produto? @relation(fields: [produtoId], references: [id])
+  venda     Venda?   @relation(fields: [vendaId], references: [id])
+}
+
+// export type Venda = {
+//   id: UUID;
+//   latitude: number;
+//   logitude: number;
+//   produtosCarrinho: ProdutoCarrinho[];
+// };
