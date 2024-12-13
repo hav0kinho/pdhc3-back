@@ -3,9 +3,10 @@ import prisma from "../db/db";
 import { ProdutoCarrinhoCreateDTO } from "../models/ProdutoCarrinho/DTO/ProdutoCarrinhoCreateDTO";
 import { ProdutoCarrinho } from "../models/ProdutoCarrinho/ProdutoCarrinho";
 
+// Função para resgatar os produtos do carrinho
 export const resgatarProdutosCarrinho = async () => {
   try {
-    const produtosCarrinho = await prisma.produtoCarrinho.findMany();
+    const produtosCarrinho = await prisma.produtoCarrinho.findMany(); // Resgatando todos os produtos do carrinho
     console.log("Produtos do carrinho resgatados com sucesso!");
     return produtosCarrinho;
   } catch (e) {
@@ -14,6 +15,7 @@ export const resgatarProdutosCarrinho = async () => {
   }
 };
 
+// Função para resgatar os produtos do carrinho de uma venda
 export const resgatarProdutosCarrinhoDeUmaVenda = async (idVenda: string) => {
   try {
     const produtosCarrinho = await prisma.produtoCarrinho.findMany({
@@ -32,6 +34,7 @@ export const resgatarProdutosCarrinhoDeUmaVenda = async (idVenda: string) => {
   }
 };
 
+// Função para resgatar os produtos do carrinho de um produto
 export const resgatarProdutosCarrinhoDeUmProduto = async (
   idProduto: string
 ) => {
@@ -49,6 +52,7 @@ export const resgatarProdutosCarrinhoDeUmProduto = async (
   }
 };
 
+// Função para resgatar um produto do carrinho
 export const criarProdutoCarrinho = async (
   produtoCarrinho: ProdutoCarrinhoCreateDTO,
   idVenda: string
@@ -60,7 +64,7 @@ export const criarProdutoCarrinho = async (
         produto: { connect: { id: produtoCarrinho.produto } },
         venda: { connect: { id: idVenda } },
       },
-    });
+    }); // Criando um novo ProdutoCarrinho (Entidade de Relacionamento/Intermediária)
     console.log("Registro de carrinho criado com sucesso!");
     return produtoCarrinhoCriado.id;
   } catch (e) {

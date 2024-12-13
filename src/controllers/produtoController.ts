@@ -2,10 +2,10 @@ import { UUID } from "crypto";
 import prisma from "../db/db";
 import { ProdutoCreateDTO } from "../models/Produto/DTO/ProdutoCreateDTO";
 
+// Função para resgatar todos os produtos
 export const resgatarProdutos = async () => {
-  // Implementar lógica para resgatar todos os produtos do Prisma
   try {
-    const produtos = await prisma.produto.findMany();
+    const produtos = await prisma.produto.findMany(); // Resgatando todos os produtos
     console.log("Produtos resgatados com sucesso!");
     return produtos;
   } catch (e) {
@@ -14,14 +14,14 @@ export const resgatarProdutos = async () => {
   }
 };
 
+// Função para resgatar um produto específico
 export const resgatarProduto = async (id: string) => {
-  // Implementar lógica para resgatar todos os produtos do Prisma
   try {
     const produto = await prisma.produto.findFirst({
       where: {
         id: id,
       },
-    });
+    }); // Resgatando um produto específico
     console.log("Produto resgatado com sucesso!");
     return produto;
   } catch (e) {
@@ -29,13 +29,12 @@ export const resgatarProduto = async (id: string) => {
     return null;
   }
 };
-
+// Função para criar um produto
 export const criarProduto = async (produto: ProdutoCreateDTO) => {
-  // Implementar lógica para criar um produto e salvar no Prisma
   try {
     const produtoCriado = await prisma.produto.create({
       data: produto,
-    });
+    }); // Criando um novo produto
     console.log("Produto criado com sucesso!");
     return produtoCriado;
   } catch (e) {
@@ -44,14 +43,14 @@ export const criarProduto = async (produto: ProdutoCreateDTO) => {
   }
 };
 
+// Função para remover um produto
 export const removerProduto = async (uuid: string) => {
-  // Implementar lógica para remover um produto do Prisma
   try {
     const produtoRemovido = await prisma.produto.delete({
       where: {
         id: uuid,
       },
-    });
+    }); // Removendo um produto
     console.log("Produto removido com sucesso!");
     return produtoRemovido;
   } catch (e) {
@@ -60,6 +59,7 @@ export const removerProduto = async (uuid: string) => {
   }
 };
 
+// Função para atualizar a quantidade de um produto
 export const atualizarQuantidadeProduto = async (
   uuid: string,
   quantidade: number
@@ -72,7 +72,7 @@ export const atualizarQuantidadeProduto = async (
       data: {
         quantidade: quantidade,
       },
-    });
+    }); // Atualizando a quantidade de um produto
     console.log("Produto atualizado com sucesso!");
     console.log(produtoAtualizado);
     return produtoAtualizado;
@@ -82,21 +82,22 @@ export const atualizarQuantidadeProduto = async (
   }
 };
 
+// Função para reduzir a quantidade de um produto
 export const reduzirQuantidadeProduto = async (
   uuid: string,
   quantidade: number
 ) => {
   try {
-    const produto = await resgatarProduto(uuid);
+    const produto = await resgatarProduto(uuid); // Resgatando o produto pelo ID
     if (!produto || produto.quantidade < quantidade) {
       console.error("Estoque insuficiente ou produto não encontrado.");
       return null;
-    }
+    } // Verificando se o produto existe e se a quantidade é suficiente
 
     const produtoAtualizado = await prisma.produto.update({
       where: { id: uuid },
       data: { quantidade: produto.quantidade - quantidade },
-    });
+    }); // Atualizando a quantidade do produto
 
     console.log("Estoque do produto reduzido com sucesso!");
     return produtoAtualizado;

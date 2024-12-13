@@ -6,18 +6,17 @@ import { Venda } from "../models/Venda/Venda";
 import {
   criarProdutoCarrinho,
   resgatarProdutosCarrinhoDeUmaVenda,
-  resgatarProdutosCarrinhoDeUmProduto,
 } from "./produtoCarrinhoController";
 import { reduzirQuantidadeProduto, resgatarProduto } from "./produtoController";
 
+// Função para resgatar todas as vendas com seus produtos
 export const resgatarVendas = async () => {
-  // Implementar lógica para resgatar todas as vendas do Prisma
   try {
     const vendas = await prisma.venda.findMany({
       include: {
         produtosVendidos: true,
       },
-    });
+    }); // Resgatando todas as vendas e produtos vendidos
 
     console.log("Vendas resgatadas com sucesso!");
     return vendas;
@@ -27,13 +26,14 @@ export const resgatarVendas = async () => {
   }
 };
 
+// Função para criar uma venda
 export const criarVenda = async (venda: VendaCreateDTO) => {
   if (venda.produtosVendidos.length === 0) {
     console.error(
       "Erro ao criar venda: Nenhum produto foi adicionado ao carrinho"
     );
     return null;
-  }
+  } // Verifica se há produtos no carrinho enviado.
   try {
     const produtosCarrinho = venda.produtosVendidos;
 
@@ -44,7 +44,7 @@ export const criarVenda = async (venda: VendaCreateDTO) => {
         dataVenda: venda.dataVenda,
         valorTotal: venda.valorTotal,
       },
-    });
+    }); // Criando uma nova venda
     console.log("Venda criada com sucesso!");
 
     venda.produtosVendidos.map(async (produtoVenda) => {
@@ -52,7 +52,7 @@ export const criarVenda = async (venda: VendaCreateDTO) => {
         produtoVenda.produto,
         produtoVenda.quantidadeVendida
       );
-    });
+    }); // Reduz a quantidade de produtos no estoque
 
     const produtosCarrinhosCriados = produtosCarrinho.map(async (produto) => {
       const produtoCarrinhoCriado = await criarProdutoCarrinho(
@@ -69,6 +69,7 @@ export const criarVenda = async (venda: VendaCreateDTO) => {
   }
 };
 
+// Função para resgatar os produtos de uma venda
 export const resgatarProdutosDeUmaVenda = async (idVenda: string) => {
   try {
     const produtosCarrinho = await resgatarProdutosCarrinhoDeUmaVenda(idVenda);
@@ -86,7 +87,6 @@ export const resgatarProdutosDeUmaVenda = async (idVenda: string) => {
 };
 
 // export const criarVenda = async (venda: VendaCreateDTO) => {
-//   // Implementar lógica para criar um produto e salvar no Prisma
 //   try {
 //     const vendaCriada = await prisma.venda.create({
 //       data: venda,
@@ -100,7 +100,6 @@ export const resgatarProdutosDeUmaVenda = async (idVenda: string) => {
 // };
 
 // export const criarVenda = async (venda: VendaCreateDTO) => {
-//   // Implementar lógica para criar um produto e salvar no Prisma
 //   try{
 //     const produtosCarrinho = venda.produtosVendidos;
 //     produtosCarrinho.map(async (produto) => {

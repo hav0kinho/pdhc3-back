@@ -9,12 +9,13 @@ import {
 
 const router = Router();
 
-// Rotas do Produto
+// Rota de resgate da lista de produtos
 router.get("/", async (req, res) => {
   const produtos = await resgatarProdutos();
   res.status(200).json(produtos);
 });
 
+// Rota de resgate de um produto específico
 router.get("/:id", async (req, res) => {
   const id = req.params.id;
   const produto = await resgatarProduto(id);
@@ -25,12 +26,14 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// Rota de criação de um novo produto
 router.post("/", async (req, res) => {
   const produto = req.body;
   const novoProduto = await criarProduto(produto);
   res.status(201).json(novoProduto);
 });
 
+// Rota de remoção de um produto específico
 router.delete("/:id", async (req, res) => {
   const id = req.params.id;
   const produto = await removerProduto(id);
@@ -41,6 +44,7 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+// Rota de atualização da quantidade de um produto específico
 router.post("/atualizar-quantidade/:id", async (req, res) => {
   const id = req.params.id;
   const quantidade: number = req.body.quantidade;
