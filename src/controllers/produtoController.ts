@@ -81,3 +81,27 @@ export const atualizarQuantidadeProduto = async (
     return null;
   }
 };
+
+export const reduzirQuantidadeProduto = async (
+  uuid: string,
+  quantidade: number
+) => {
+  try {
+    const produto = await resgatarProduto(uuid);
+    if (!produto || produto.quantidade < quantidade) {
+      console.error("Estoque insuficiente ou produto não encontrado.");
+      return null;
+    }
+
+    const produtoAtualizado = await prisma.produto.update({
+      where: { id: uuid },
+      data: { quantidade: produto.quantidade - quantidade },
+    });
+
+    console.log("Estoque do produto reduzido com sucesso!");
+    return produtoAtualizado;
+  } catch (e) {
+    console.error("Erro ao reduzir a quantidade do produto: ", e);
+    return null;
+  }
+};

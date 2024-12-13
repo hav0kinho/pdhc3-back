@@ -8,6 +8,7 @@ import {
   resgatarProdutosCarrinhoDeUmaVenda,
   resgatarProdutosCarrinhoDeUmProduto,
 } from "./produtoCarrinhoController";
+import { reduzirQuantidadeProduto, resgatarProduto } from "./produtoController";
 
 export const resgatarVendas = async () => {
   // Implementar lógica para resgatar todas as vendas do Prisma
@@ -27,6 +28,12 @@ export const resgatarVendas = async () => {
 };
 
 export const criarVenda = async (venda: VendaCreateDTO) => {
+  if (venda.produtosVendidos.length === 0) {
+    console.error(
+      "Erro ao criar venda: Nenhum produto foi adicionado ao carrinho"
+    );
+    return null;
+  }
   try {
     const produtosCarrinho = venda.produtosVendidos;
 
@@ -39,6 +46,13 @@ export const criarVenda = async (venda: VendaCreateDTO) => {
       },
     });
     console.log("Venda criada com sucesso!");
+
+    venda.produtosVendidos.map(async (produtoVenda) => {
+      await reduzirQuantidadeProduto(
+        produtoVenda.produto,
+        produtoVenda.quantidadeVendida
+      );
+    });
 
     const produtosCarrinhosCriados = produtosCarrinho.map(async (produto) => {
       const produtoCarrinhoCriado = await criarProdutoCarrinho(
